@@ -92,6 +92,69 @@ calendar.on('beforeCreateEvent', (eventObj) => {
 | [on](#on)                                       | Registers an instance event. A detailed description is provided in the [Instance Events](#instance-events) section.                   |
 | [once](#once)                                   | Registers an instance event to fire only once. A detailed description is provided in the [Instance Events](#instance-events) section. |
 
+## Custom rows (weekly/day views)
+
+Custom rows let you render arbitrary, non-draggable grid rows above or below the time-of-day area in the weekly/day views. Each row has a left title area and one cell per day. Cells can contain any HTML content (e.g., text, icons, or interactive controls).
+
+### Enabling custom rows
+
+Add rows via the weekly options `week.customRows` when creating the calendar or via `setOptions`.
+
+```js
+const calendar = new Calendar('#container', {
+  defaultView: 'week',
+  week: {
+    customRows: [
+      {
+        name: 'preferences',           // unique id
+        position: 'top',               // 'top' | 'bottom' (default 'top')
+        title: 'Preferences',          // left header title text
+        renderCell: ({ date, index, container }) => {
+          const input = document.createElement('input');
+          input.placeholder = date.toDate().toDateString();
+          container.innerHTML = '';
+          container.appendChild(input);
+        },
+      },
+    ],
+  },
+});
+```
+
+- `name` (string): Unique key for the row and panel state.
+- `position` ('top' | 'bottom'): Where to render the row relative to the time grid.
+- `title` (string): Left header title text. Uses the calendar template `customRowTitle` under the hood.
+- `renderCell` (function): Imperative renderer called for each day cell with `{ date: TZDate, index: number, container: HTMLElement }`.
+
+Notes
+- Cells are not drag sources or drop targets and do not affect event layout or timezone logic.
+- Rows are resizable like other day-grid panels. Height persists during the session.
+- To change custom rows at runtime:
+
+```js
+calendar.setOptions({
+  week: {
+    customRows: [ /* new array */ ],
+  },
+});
+```
+
+### Title customization
+
+The left title area for custom rows uses the template key `customRowTitle`. Provide a custom renderer if you want a different appearance:
+
+```js
+calendar.setOptions({
+  template: {
+    customRowTitle(label) {
+      return `<span class="my-title">${label}</span>`;
+    },
+  },
+});
+```
+
+For a deeper architectural overview, see `calendar-custom-rows.md` in this folder.
+
 ### render
 
 - Type: `render(): Calendar`
