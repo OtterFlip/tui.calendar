@@ -93,6 +93,7 @@ export function App({ view }: { view: ViewType }) {
     const calInstance = getCalInstance();
     if (!calInstance) {
       setSelectedDateRangeText('');
+      return;
     }
 
     const viewName = calInstance.getViewName();
@@ -151,8 +152,8 @@ export function App({ view }: { view: ViewType }) {
     console.groupEnd();
 
     const { id, calendarId } = res;
-
-    getCalInstance().deleteEvent(id, calendarId);
+    const cal = getCalInstance();
+    if (cal) cal.deleteEvent(id, calendarId);
   };
 
   const onChangeSelect = (ev: ChangeEvent<HTMLSelectElement>) => {
@@ -168,8 +169,12 @@ export function App({ view }: { view: ViewType }) {
   const onClickNavi = (ev: MouseEvent<HTMLButtonElement>) => {
     if ((ev.target as HTMLButtonElement).tagName === 'BUTTON') {
       const button = ev.target as HTMLButtonElement;
-      const actionName = (button.getAttribute('data-action') ?? 'month').replace('move-', '');
-      getCalInstance()[actionName]();
+      const action = (button.getAttribute('data-action') ?? 'move-today').replace('move-', '');
+      const cal = getCalInstance();
+      if (!cal) return;
+      if (action === 'prev') cal.prev();
+      else if (action === 'next') cal.next();
+      else cal.today();
       updateRenderRangeText();
     }
   };
@@ -193,7 +198,8 @@ export function App({ view }: { view: ViewType }) {
       'week.timegridLeft.width': '100px',
     };
 
-    getCalInstance().setTheme(newTheme);
+    const cal = getCalInstance();
+    cal?.setTheme(newTheme as any);
   };
 
   const onBeforeUpdateEvent: ExternalEventTypes['beforeUpdateEvent'] = (updateData) => {
@@ -204,7 +210,8 @@ export function App({ view }: { view: ViewType }) {
     const targetEvent = updateData.event;
     const changes = { ...updateData.changes };
 
-    getCalInstance().updateEvent(targetEvent.id, targetEvent.calendarId, changes);
+    const cal = getCalInstance();
+    if (cal) cal.updateEvent(targetEvent.id, targetEvent.calendarId, changes);
   };
 
   const onBeforeCreateEvent: ExternalEventTypes['beforeCreateEvent'] = (eventData) => {
@@ -222,7 +229,8 @@ export function App({ view }: { view: ViewType }) {
       isPrivate: eventData.isPrivate,
     };
 
-    getCalInstance().createEvents([event]);
+    const cal = getCalInstance();
+    cal?.createEvents([event as Partial<EventObject>]);
   };
 
   return (
@@ -302,10 +310,29 @@ export function App({ view }: { view: ViewType }) {
           taskView: true,
           customRows: [
             {
-              name: 'timezone',
+              name: 'timezone_top',
               position: 'top',
               // @ts-ignore example uses extended option field available in workspace build
-              title: 'Timezone',
+              title: 'Timezone (top)',
+              // @ts-ignore - renderCell is custom extension
+              renderCell: ({ container, date }) => {
+                const select = document.createElement('select');
+                select.style.width = '90%';
+                ;['Local','UTC','Asia/Seoul','America/New_York'].forEach((tz) => {
+                  const opt = document.createElement('option');
+                  opt.value = tz;
+                  opt.text = `${date.getDate()} ${tz}`;
+                  select.appendChild(opt);
+                });
+                container.innerHTML = '';
+                container.appendChild(select);
+              },
+            },
+            {
+              name: 'timezone_bottom',
+              position: 'bottom',
+              // @ts-ignore example uses extended option field available in workspace build
+              title: 'Timezone (bottom)',
               // @ts-ignore - renderCell is custom extension
               renderCell: ({ container, date }) => {
                 const select = document.createElement('select');
