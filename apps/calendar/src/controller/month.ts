@@ -129,7 +129,8 @@ function _stackTimeFromTop(idsOfDay: IDS_OF_DAY, uiModelColl: Collection<EventUI
 
     if (isUndefined(topArrayInYMD)) {
       topArrayInYMD = indiceInYMD[eventYMD] = [];
-      idsOfDay[eventYMD].forEach((cid) => {
+      const ids = idsOfDay[eventYMD] ?? [];
+      ids.forEach((cid) => {
         uiModelAlldayColl.doWhenHas(cid, (uiModel) => {
           topArrayInYMD.push(uiModel.top);
         });

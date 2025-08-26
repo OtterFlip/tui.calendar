@@ -50,6 +50,10 @@ export const templates: Template = {
     return <span className={cls('left-content')}>Task</span>;
   },
 
+  customRowTitle(label: string) {
+    return <span className={cls('left-content')}>{label}</span>;
+  },
+
   alldayTitle() {
     return <span className={cls('left-content')}>All Day</span>;
   },

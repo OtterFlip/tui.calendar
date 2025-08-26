@@ -29,7 +29,6 @@ import { primaryTimezoneSelector } from '@src/selectors/timezone';
 import { addDate, getRowStyleInfo, toEndOfDay, toStartOfDay } from '@src/time/datetime';
 
 import type { WeekOptions } from '@t/options';
-import type { AlldayEventCategory } from '@t/panel';
 
 function useDayViewState() {
   const calendar = useStore(calendarSelector);
@@ -104,13 +103,13 @@ export function Day() {
       return null;
     }
 
-    const rowType = key as AlldayEventCategory;
+    const rowType = key as 'milestone' | 'task' | 'allday';
 
     return (
       <Panel key={rowType} name={rowType} resizable={rowType !== lastPanelType}>
         {rowType === 'allday' ? (
           <AlldayGridRow
-            events={dayGridEvents[rowType]}
+            events={dayGridEvents[rowType as 'allday']}
             rowStyleInfo={rowStyleInfo}
             gridColWidthMap={cellWidthMap}
             weekDates={days}
@@ -119,8 +118,8 @@ export function Day() {
           />
         ) : (
           <OtherGridRow
-            category={rowType}
-            events={dayGridEvents[rowType]}
+            category={rowType as 'milestone' | 'task'}
+            events={dayGridEvents[rowType as 'milestone' | 'task']}
             weekDates={days}
             height={gridRowLayout[rowType]?.height}
             options={weekOptions}

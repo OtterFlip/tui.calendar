@@ -2,6 +2,8 @@ import type { ComponentType } from 'preact';
 
 import type { DeepPartial } from 'ts-essentials';
 
+import type TZDate from '@src/time/date';
+
 import type { EventObject, EventObjectWithDefaultValues } from '@t/events';
 import type { TemplateConfig } from '@t/template';
 import type { ThemeState } from '@t/theme';
@@ -30,6 +32,30 @@ export interface WeekOptions {
   eventView?: boolean | EventView[];
   taskView?: boolean | TaskView[];
   collapseDuplicateEvents?: boolean | Partial<CollapseDuplicateEventsOptions>;
+  /**
+   * Custom rows rendered as day-grid rows in week/day views.
+   * Rows can be placed above or below the time grid.
+   */
+  customRows?: CustomRow[];
+}
+
+export type CustomRowPosition = 'top' | 'bottom';
+
+export interface CustomRowCellRenderArgs {
+  date: TZDate;
+  index: number;
+  container: HTMLElement;
+}
+
+export interface CustomRow {
+  /** unique name, also used as panel key */
+  name: string;
+  /** where to render relative to time grid; default 'top' */
+  position?: CustomRowPosition;
+  /** visible title text for the left header area */
+  title?: string;
+  /** imperatively render a cell's content */
+  renderCell?: (args: CustomRowCellRenderArgs) => void;
 }
 
 export interface MonthOptions {

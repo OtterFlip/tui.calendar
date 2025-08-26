@@ -63,6 +63,7 @@ export interface Template {
   task: (event: EventObjectWithDefaultValues) => TemplateReturnType;
   alldayTitle: () => TemplateReturnType;
   allday: (event: EventObjectWithDefaultValues) => TemplateReturnType;
+  customRowTitle: (label: string) => TemplateReturnType;
   time: (event: EventObjectWithDefaultValues) => TemplateReturnType;
   goingDuration: (event: EventObjectWithDefaultValues) => TemplateReturnType;
   comingDuration: (event: EventObjectWithDefaultValues) => TemplateReturnType;

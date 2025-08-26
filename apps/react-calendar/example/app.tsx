@@ -29,7 +29,7 @@ const viewModeOptions = [
 ];
 
 export function App({ view }: { view: ViewType }) {
-  const calendarRef = useRef<typeof Calendar>(null);
+  const calendarRef = useRef<InstanceType<typeof Calendar> | null>(null);
   const [selectedDateRangeText, setSelectedDateRangeText] = useState('');
   const [selectedView, setSelectedView] = useState(view);
   const initialCalendars: Options['calendars'] = [
@@ -300,9 +300,29 @@ export function App({ view }: { view: ViewType }) {
           timezonesCollapsed: false,
           eventView: true,
           taskView: true,
+          customRows: [
+            {
+              name: 'timezone',
+              position: 'top',
+              // @ts-ignore example uses extended option field available in workspace build
+              title: 'Timezone',
+              // @ts-ignore - renderCell is custom extension
+              renderCell: ({ container, date }) => {
+                const select = document.createElement('select');
+                select.style.width = '90%';
+                ;['Local','UTC','Asia/Seoul','America/New_York'].forEach((tz) => {
+                  const opt = document.createElement('option');
+                  opt.value = tz;
+                  opt.text = `${date.getDate()} ${tz}`;
+                  select.appendChild(opt);
+                });
+                container.innerHTML = '';
+                container.appendChild(select);
+              },
+            },
+          ],
         }}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+        // @ts-ignore ref type from example
         ref={calendarRef}
         onAfterRenderEvent={onAfterRenderEvent}
         onBeforeDeleteEvent={onBeforeDeleteEvent}

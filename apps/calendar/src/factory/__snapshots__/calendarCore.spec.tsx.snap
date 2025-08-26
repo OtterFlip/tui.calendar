@@ -31,6 +31,7 @@ Object {
     "alldayTitle": [Function],
     "collapseBtnTitle": [Function],
     "comingDuration": [Function],
+    "customRowTitle": [Function],
     "endDatePlaceholder": [Function],
     "goingDuration": [Function],
     "locationPlaceholder": [Function],
@@ -199,6 +200,7 @@ Object {
   "useFormPopup": false,
   "week": Object {
     "collapseDuplicateEvents": false,
+    "customRows": Array [],
     "dayNames": Array [],
     "eventView": true,
     "hourEnd": 24,

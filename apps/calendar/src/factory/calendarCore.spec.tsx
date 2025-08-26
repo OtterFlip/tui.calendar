@@ -754,6 +754,7 @@ describe('getOptions/setOptions', () => {
     const options = mockCalendarOptions.getOptions();
 
     // Then
+    // Update snapshot to include new template key and week.customRows default
     expect(options).toMatchSnapshot();
   });
 
@@ -1217,7 +1218,7 @@ describe('getDateRangeStart/getDateRangeEnd', () => {
   describe('when setDate is called', () => {
     it('should set renderRange on day view', () => {
       // Given
-      const targetDate = new Date('2022-06-15'); // Wed
+      const targetDate = new Date('2022-06-15T00:00:00'); // Wed
       const expectedStartDate = new TZDate(targetDate);
       const expectedEndDate = new TZDate(targetDate);
 
@@ -1234,9 +1235,9 @@ describe('getDateRangeStart/getDateRangeEnd', () => {
 
     it('should set renderRange on week view', () => {
       // Given
-      const targetDate = new Date('2022-06-15'); // Wed
-      const expectedStartDate = new TZDate('2022-06-12');
-      const expectedEndDate = new TZDate('2022-06-18');
+      const targetDate = new Date('2022-06-15T00:00:00'); // Wed
+      const expectedStartDate = new TZDate('2022-06-12T00:00:00');
+      const expectedEndDate = new TZDate('2022-06-18T00:00:00');
 
       // When
       act(() => {
@@ -1251,9 +1252,9 @@ describe('getDateRangeStart/getDateRangeEnd', () => {
 
     it('should set renderRange on month when isAlways6Weeks is true', () => {
       // Given
-      const targetDate = new Date('2022-06-15'); // Wed
-      const expectedStartDate = new TZDate('2022-05-29');
-      const expectedEndDate = new TZDate('2022-07-09');
+      const targetDate = new Date('2022-06-15T00:00:00'); // Wed
+      const expectedStartDate = new TZDate('2022-05-29T00:00:00');
+      const expectedEndDate = new TZDate('2022-07-09T00:00:00');
 
       // When
       act(() => {
@@ -1268,9 +1269,9 @@ describe('getDateRangeStart/getDateRangeEnd', () => {
 
     it('should set renderRange on month when isAlways6Weeks is false)', () => {
       // Given
-      const targetDate = new Date('2022-06-15'); // Wed
-      const expectedStartDate = new TZDate('2022-05-29');
-      const expectedEndDate = new TZDate('2022-07-02'); // 5 weeks
+      const targetDate = new Date('2022-06-15T00:00:00'); // Wed
+      const expectedStartDate = new TZDate('2022-05-29T00:00:00');
+      const expectedEndDate = new TZDate('2022-07-02T00:00:00'); // 5 weeks
 
       // When
       act(() => {

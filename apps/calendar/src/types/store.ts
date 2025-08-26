@@ -14,7 +14,9 @@ import type { EventState } from '@t/events';
 import type { MonthOptions, WeekOptions } from '@t/options';
 
 export type CalendarMonthOptions = Required<MonthOptions>;
-export type CalendarWeekOptions = Required<WeekOptions>;
+export type CalendarWeekOptions = Required<Omit<WeekOptions, 'customRows'>> & {
+  customRows: NonNullable<WeekOptions['customRows']>;
+};
 
 export type Rect = Pick<DOMRect, 'top' | 'left' | 'width' | 'height'>;
 

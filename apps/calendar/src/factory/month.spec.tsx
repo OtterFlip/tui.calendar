@@ -74,16 +74,23 @@ describe('Primary Timezone', () => {
     // Given
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2022-05-04T00:00:00+09:00'));
-    const { instance } = setup({}, [
+    const { instance } = setup(
       {
-        id: '1',
-        calendarId: 'cal1',
-        title: reTargetEventTitle,
-        category: 'time',
-        start: '2022-05-04T10:00:00+09:00',
-        end: '2022-05-04T11:00:00+09:00',
+        timezone: {
+          zones: [{ timezoneName: 'Asia/Seoul' }],
+        },
       },
-    ]);
+      [
+        {
+          id: '1',
+          calendarId: 'cal1',
+          title: reTargetEventTitle,
+          category: 'time',
+          start: '2022-05-04T10:00:00+09:00',
+          end: '2022-05-04T11:00:00+09:00',
+        },
+      ]
+    );
     const prevEvent = screen.getByText(reTargetEventTitle);
     expect(hasDesiredStartTime(prevEvent, '10:00')).toBe(true);
 

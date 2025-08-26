@@ -65,6 +65,7 @@ function initializeWeekOptions(weekOptions: Options['week'] = {}): CalendarWeekO
     eventView: true,
     taskView: true,
     collapseDuplicateEvents: false,
+    customRows: [],
     ...weekOptions,
   };
 

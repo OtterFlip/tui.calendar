@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'preact/hooks';
 
 import { GridHeader } from '@src/components/dayGridCommon/gridHeader';
 import { AlldayGridRow } from '@src/components/dayGridWeek/alldayGridRow';
+import { CustomGridRow } from '@src/components/dayGridWeek/customGridRow';
 import { OtherGridRow } from '@src/components/dayGridWeek/otherGridRow';
 import { Layout } from '@src/components/layout';
 import { Panel } from '@src/components/panel';
@@ -30,7 +31,6 @@ import { addDate, getRowStyleInfo, toEndOfDay, toStartOfDay } from '@src/time/da
 import { first, last } from '@src/utils/array';
 
 import type { WeekOptions } from '@t/options';
-import type { AlldayEventCategory } from '@t/panel';
 
 function useWeekViewState() {
   const options = useStore(optionsSelector);
@@ -59,8 +59,16 @@ export function Week() {
   const [timePanel, setTimePanelRef] = useDOMNode<HTMLDivElement>();
 
   const weekOptions = options.week as Required<WeekOptions>;
-  const { narrowWeekend, startDayOfWeek, workweek, hourStart, hourEnd, eventView, taskView } =
-    weekOptions;
+  const {
+    narrowWeekend,
+    startDayOfWeek,
+    workweek,
+    hourStart,
+    hourEnd,
+    eventView,
+    taskView,
+    customRows = [],
+  } = weekOptions;
   const weekDates = useMemo(() => getWeekDates(renderDate, weekOptions), [renderDate, weekOptions]);
   const dayNames = getDayNames(weekDates, options.week?.dayNames ?? []);
   const { rowStyleInfo, cellWidthMap } = getRowStyleInfo(
@@ -106,13 +114,13 @@ export function Week() {
       return null;
     }
 
-    const rowType = key as AlldayEventCategory;
+    const rowType = key as 'milestone' | 'task' | 'allday';
 
     return (
       <Panel name={rowType} key={rowType} resizable={rowType !== lastPanelType}>
         {rowType === 'allday' ? (
           <AlldayGridRow
-            events={eventByPanel[rowType]}
+            events={eventByPanel[rowType as 'allday']}
             rowStyleInfo={rowStyleInfo}
             gridColWidthMap={cellWidthMap}
             weekDates={weekDates}
@@ -121,8 +129,8 @@ export function Week() {
           />
         ) : (
           <OtherGridRow
-            category={rowType}
-            events={eventByPanel[rowType]}
+            category={rowType as 'milestone' | 'task'}
+            events={eventByPanel[rowType as 'milestone' | 'task']}
             weekDates={weekDates}
             height={gridRowLayout[rowType]?.height}
             options={weekOptions}
@@ -132,6 +140,36 @@ export function Week() {
       </Panel>
     );
   });
+  const customTopRows = customRows
+    .filter((r) => r.position !== 'bottom')
+    .map((row) => (
+      <Panel name={row.name} key={`custom-${row.name}`} resizable={true}>
+        <CustomGridRow
+          name={row.name}
+          title={row.title ?? row.name}
+          titleTemplate={(row as any).titleTemplate}
+          height={gridRowLayout[row.name]?.height}
+          weekDates={weekDates}
+          narrowWeekend={narrowWeekend}
+          renderCell={row.renderCell}
+        />
+      </Panel>
+    ));
+  const customBottomRows = customRows
+    .filter((r) => r.position === 'bottom')
+    .map((row) => (
+      <Panel name={row.name} key={`custom-${row.name}`} resizable={true}>
+        <CustomGridRow
+          name={row.name}
+          title={row.title ?? row.name}
+          titleTemplate={(row as any).titleTemplate}
+          height={gridRowLayout[row.name]?.height}
+          weekDates={weekDates}
+          narrowWeekend={narrowWeekend}
+          renderCell={row.renderCell}
+        />
+      </Panel>
+    ));
   const hasTimePanel = useMemo(() => activePanels.includes('time'), [activePanels]);
 
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
@@ -152,6 +190,7 @@ export function Week() {
           rowStyleInfo={rowStyleInfo}
         />
       </Panel>
+      {customTopRows}
       {dayGridRows}
       {hasTimePanel ? (
         <Panel name="time" autoSize={1} ref={setTimePanelRef}>
@@ -159,6 +198,7 @@ export function Week() {
           <TimezoneLabels top={stickyTop} />
         </Panel>
       ) : null}
+      {customBottomRows}
     </Layout>
   );
 }

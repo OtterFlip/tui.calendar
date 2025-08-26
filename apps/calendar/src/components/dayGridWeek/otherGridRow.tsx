@@ -14,12 +14,11 @@ import { weekDayGridLeftSelector } from '@src/selectors/theme';
 import type TZDate from '@src/time/date';
 
 import type { WeekOptions } from '@t/options';
-import type { AlldayEventCategory } from '@t/panel';
 
-type GridRowTitleTemplate = `${AlldayEventCategory}Title`;
+type GridRowTitleTemplate = 'milestoneTitle' | 'taskTitle';
 
 interface Props {
-  category: Exclude<AlldayEventCategory, 'allday'>;
+  category: 'milestone' | 'task';
   events: EventUIModel[];
   weekDates: TZDate[];
   timesWidth?: number;
@@ -40,7 +39,8 @@ export function OtherGridRow({
 
   const maxTop = useMemo(() => Math.max(0, ...events.map(({ top }) => top)), [events]);
   const { narrowWeekend = false } = options;
-  const rowTitleTemplate: GridRowTitleTemplate = `${category}Title`;
+  const rowTitleTemplate: GridRowTitleTemplate =
+    category === 'milestone' ? 'milestoneTitle' : 'taskTitle';
 
   const { clickedIndex, isClickedCount, onClickExceedCount, onClickCollapseButton } =
     useGridRowHeightController(maxTop, category);
