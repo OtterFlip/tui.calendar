@@ -27,8 +27,9 @@ export function CustomGridCell({ width, left, date, index, renderCell }: Props) 
   return (
     <div
       className={cls('panel-grid')}
-      style={{ width, left, borderRight, backgroundColor }}
-      ref={containerRef}
-    />
+      style={{ width, left, borderRight, backgroundColor, height: '100%' }}
+    >
+      <div ref={containerRef} style={{ padding: '4px 6px', height: '100%' }} />
+    </div>
   );
 }

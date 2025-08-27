@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import { useCallback, useMemo } from 'preact/hooks';
+import { useCallback, useLayoutEffect, useMemo } from 'preact/hooks';
 
 import { GridHeader } from '@src/components/dayGridCommon/gridHeader';
 import { AlldayGridRow } from '@src/components/dayGridWeek/alldayGridRow';
@@ -9,8 +9,12 @@ import { Layout } from '@src/components/layout';
 import { Panel } from '@src/components/panel';
 import { TimeGrid } from '@src/components/timeGrid/timeGrid';
 import { TimezoneLabels } from '@src/components/timeGrid/timezoneLabels';
-import { WEEK_DAY_NAME_BORDER, WEEK_DAY_NAME_HEIGHT } from '@src/constants/style';
-import { useStore } from '@src/contexts/calendarStore';
+import {
+  DEFAULT_PANEL_HEIGHT,
+  WEEK_DAY_NAME_BORDER,
+  WEEK_DAY_NAME_HEIGHT,
+} from '@src/constants/style';
+import { useDispatch, useStore } from '@src/contexts/calendarStore';
 import { useTheme } from '@src/contexts/themeStore';
 import { cls } from '@src/helpers/css';
 import { getDayNames } from '@src/helpers/dayName';
@@ -167,6 +171,7 @@ export function Week() {
           weekDates={weekDates}
           narrowWeekend={narrowWeekend}
           renderCell={row.renderCell}
+          withTopBorder={true}
         />
       </Panel>
     ));
@@ -175,6 +180,17 @@ export function Week() {
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
 
   const stickyTop = useTimezoneLabelsTop(timePanel);
+
+  // Ensure the time panel takes the remaining height instead of any custom bottom rows
+  const { setLastPanelType, updateDayGridRowHeight } = useDispatch('weekViewLayout');
+  useLayoutEffect(() => {
+    if (hasTimePanel) {
+      if (!gridRowLayout?.time) {
+        updateDayGridRowHeight({ rowName: 'time', height: DEFAULT_PANEL_HEIGHT });
+      }
+      setLastPanelType('time');
+    }
+  }, [hasTimePanel, gridRowLayout?.time, setLastPanelType, updateDayGridRowHeight]);
 
   return (
     <Layout className={cls('week-view')} autoAdjustPanels={true}>
