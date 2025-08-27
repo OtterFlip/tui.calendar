@@ -93,6 +93,7 @@ export function App({ view }: { view: ViewType }) {
     const calInstance = getCalInstance();
     if (!calInstance) {
       setSelectedDateRangeText('');
+
       return;
     }
 
@@ -312,13 +313,11 @@ export function App({ view }: { view: ViewType }) {
             {
               name: 'timezone_top',
               position: 'top',
-              // @ts-ignore example uses extended option field available in workspace build
               title: 'Timezone (top)',
-              // @ts-ignore - renderCell is custom extension
               renderCell: ({ container, date }) => {
                 const select = document.createElement('select');
                 select.style.width = '90%';
-                ;['Local','UTC','Asia/Seoul','America/New_York'].forEach((tz) => {
+                ['Local', 'UTC', 'America/New_York'].forEach((tz) => {
                   const opt = document.createElement('option');
                   opt.value = tz;
                   opt.text = `${date.getDate()} ${tz}`;
@@ -328,16 +327,24 @@ export function App({ view }: { view: ViewType }) {
                 container.appendChild(select);
               },
             },
+
+            {
+              name: 'preferences_top',
+              title: 'Preferences (t)',
+              position: 'top',
+              renderCell: ({ date, container }) => {
+                container.textContent = date.toDate().toDateString();
+              },
+            },
+
             {
               name: 'timezone_bottom',
               position: 'bottom',
-              // @ts-ignore example uses extended option field available in workspace build
-              title: 'Timezone (bottom)',
-              // @ts-ignore - renderCell is custom extension
+              title: 'Timezone (b)',
               renderCell: ({ container, date }) => {
                 const select = document.createElement('select');
                 select.style.width = '90%';
-                ;['Local','UTC','Asia/Seoul','America/New_York'].forEach((tz) => {
+                ['Local', 'UTC', 'Asia/Seoul', 'America/New_York'].forEach((tz) => {
                   const opt = document.createElement('option');
                   opt.value = tz;
                   opt.text = `${date.getDate()} ${tz}`;
@@ -345,11 +352,19 @@ export function App({ view }: { view: ViewType }) {
                 });
                 container.innerHTML = '';
                 container.appendChild(select);
+              },
+            },
+
+            {
+              name: 'preferences_bottom',
+              title: 'Preferences (b)',
+              position: 'bottom',
+              renderCell: ({ date, container }) => {
+                container.textContent = date.toDate().toDateString();
               },
             },
           ],
         }}
-        // @ts-ignore ref type from example
         ref={calendarRef}
         onAfterRenderEvent={onAfterRenderEvent}
         onBeforeDeleteEvent={onBeforeDeleteEvent}
