@@ -54,6 +54,12 @@ export interface CustomRow {
   position?: CustomRowPosition;
   /** visible title text for the left header area */
   title?: string;
+  /**
+   * Height strategy for the row.
+   * - 'content': row height expands to fit its tallest cell content (default)
+   * - 'default': row height follows the calendar's default day-grid panel height
+   */
+  heightMode?: 'content' | 'default';
   /** imperatively render a cell's content */
   renderCell?: (args: CustomRowCellRenderArgs) => void;
 }

@@ -147,7 +147,12 @@ export function Week() {
   const customTopRows = customRows
     .filter((r) => r.position !== 'bottom')
     .map((row) => (
-      <Panel name={row.name} key={`custom-${row.name}`} resizable={true}>
+      <Panel
+        name={row.name}
+        key={`custom-${row.name}`}
+        resizable={true}
+        initialHeight={gridRowLayout[row.name]?.height ?? 24}
+      >
         <CustomGridRow
           name={row.name}
           title={row.title ?? row.name}
@@ -156,13 +161,19 @@ export function Week() {
           weekDates={weekDates}
           narrowWeekend={narrowWeekend}
           renderCell={row.renderCell}
+          heightMode={(row as any).heightMode}
         />
       </Panel>
     ));
   const customBottomRows = customRows
     .filter((r) => r.position === 'bottom')
     .map((row) => (
-      <Panel name={row.name} key={`custom-${row.name}`} resizable={true}>
+      <Panel
+        name={row.name}
+        key={`custom-${row.name}`}
+        resizable={true}
+        initialHeight={gridRowLayout[row.name]?.height ?? 24}
+      >
         <CustomGridRow
           name={row.name}
           title={row.title ?? row.name}
@@ -172,6 +183,7 @@ export function Week() {
           narrowWeekend={narrowWeekend}
           renderCell={row.renderCell}
           withTopBorder={true}
+          heightMode={(row as any).heightMode}
         />
       </Panel>
     ));
@@ -193,7 +205,7 @@ export function Week() {
   }, [hasTimePanel, gridRowLayout?.time, setLastPanelType, updateDayGridRowHeight]);
 
   return (
-    <Layout className={cls('week-view')} autoAdjustPanels={true}>
+    <Layout className={cls('week-view')} autoAdjustPanels={false}>
       <Panel
         name="week-view-day-names"
         initialHeight={WEEK_DAY_NAME_HEIGHT + WEEK_DAY_NAME_BORDER * 2}
